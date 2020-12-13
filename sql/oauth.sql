@@ -4,8 +4,8 @@
  Source Server         : OAuth
  Source Server Type    : MySQL
  Source Server Version : 100414
- Source Host           : 141.136.41.1:3306
- Source Schema         : u352767641_oauth
+ Source Host           : 000.000.000.000:3306
+ Source Schema         : oauth
 
  Target Server Type    : MySQL
  Target Server Version : 100414
