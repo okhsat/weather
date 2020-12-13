@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport"              content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="description"           content="General App">
-    <meta name="keywords"              content="General App">
+    <meta name="description"           content="Weather App">
+    <meta name="keywords"              content="Weather App">
 
     <title>Weather App</title>    
     
@@ -314,6 +314,32 @@
                                                 </div>
 
                                                 <h2 class="u-h4 u-font-medium u-padding-top-large">
+                                                     Subscription Information
+                                                </h2>   
+                                                                             
+                                                <div class="c-form">
+                                                    <div class="o-layout">
+                                                        <div class="o-layout__item u-6/6@tablet">
+                                                            <div class="paid-subscriber" style="display: none;">
+                                                                <h3 style="font-size: 18px;">You are a paid subscriber. Do you have a promotion code?</h3>
+                                                                
+                                                                <div class="c-form__group">
+                                                                    <label for="profile_email" class="c-form__label">Enter your promotion code:</label>
+
+                                                                    <div class="c-form__field" id="coupon">
+                                                                        <input id="coupon" name="coupon" type="text" value="" placeholder="" class="c-form__input c-form__input--text" style="display: inline-block; width: auto;">
+                                                                        <button id="check-coupon" class="c-btn c-btn--small c-btn--secondary" type="button">Check</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="free-subscriber" style="display: none;">
+                                                                <h3 style="font-size: 18px;">You are a free subscriber activated on <span class="coupon_added" style="color: green; font-weight: 900;"></span></h3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <h2 class="u-h4 u-font-medium u-padding-top-large">
                                                      Account Information
                                                 </h2>                                
 
@@ -608,6 +634,7 @@
     var token_url     = '<?php echo $token_url; ?>';
     var user_url      = '<?php echo $user_url; ?>';
     var cities_url    = '<?php echo $cities_url; ?>';
+    var coupon_url    = '<?php echo $coupon_url; ?>';
     var client_id     = '<?php echo $client_id; ?>';
     var client_secret = '<?php echo $client_secret; ?>';
     var is_logged_in  = false;

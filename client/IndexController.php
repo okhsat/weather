@@ -14,6 +14,7 @@ class IndexController extends Controller
     {
         try {
             $this->view->pick('index');
+            $this->view->setVar('coupon_url',    isset($this->config->api->coupon_url)    ? $this->config->api->coupon_url    : '');
             $this->view->setVar('cities_url',    isset($this->config->api->cities_url)    ? $this->config->api->cities_url    : '');
             $this->view->setVar('user_url',      isset($this->config->api->user_url)      ? $this->config->api->user_url      : '');
             $this->view->setVar('token_url',     isset($this->config->api->token_url)     ? $this->config->api->token_url     : '');

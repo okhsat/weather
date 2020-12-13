@@ -9,6 +9,7 @@ return new Config(
         ],
         
         'api' => [
+            'coupon_url'    => BASE_URL.'/api/coupon',
             'cities_url'    => BASE_URL.'/api/cities',
             'user_url'      => BASE_URL.'/api/user',
             'token_url'     => BASE_URL.'/api/auth/v1/oauth/token/validate',
