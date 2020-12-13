@@ -15,7 +15,7 @@ return new Config(
             'auth_url'      => BASE_URL.'/api/auth/v1/oauth/token',
             'base_url'      => BASE_URL,
             'client_id'     => 'general-3426',
-            'client_secret' => 'iytds43wert67y8urrdfg6766dfg676drf7'
+            'client_secret' => 'client_secret'
         ]
     ]    
 );
