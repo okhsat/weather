@@ -346,6 +346,61 @@ isLoggedIn();
     
 $('document').ready(function() {
 	/**
+     * Method to handle the coupon submission
+     *
+     * since 1.0
+     */                
+    $('button#check-coupon').click( function(e) {
+        e.preventDefault();
+        
+        if ( is_logged_in && $('input#coupon').val().length > 0 ) {
+            $.ajax(
+                {
+                    url: coupon_url,
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + getAccessToken() },
+                    data: {
+                        coupon: $('input#coupon').val()
+                    }
+                }
+            
+            ).done(function(server_data) {
+	            var result;
+
+	            if ( server_data !== null && typeof server_data === 'object' ) {
+		            result = server_data;
+
+	    	    } else {			
+	     		    result = $.parseJSON( $.trim(server_data) );
+	     	    }
+
+                if ( result !== null && typeof result === 'object' && typeof result.status !== 'undefined' ) {
+	                if ( result.status == 'success' ) {
+		                message('success', "Activating the promotion code was successful.");
+
+                        $('form#profile-form .paid-subscriber').css({'display': 'none'});
+                        $('form#profile-form .free-subscriber .coupon_added').text(result.data.coupon_added);
+                        $('form#profile-form .free-subscriber').css({'display': 'block'});
+                        
+                    } else {
+	                    message('error', "Activating the promotion code failed! " + result.msg);
+	        	        console.log("Activating the promotion code failed! " + result.msg);
+                    }
+
+                } else {
+                    message('error', "Activating the promotion code failed! " + JSON.stringify(result));
+	        	    console.log("Activating the promotion code failed! " + JSON.stringify(result));
+                }
+             
+            }).fail(function(xhr) {
+                message('error', "An error occured: " + xhr.status + " " + xhr.statusText);
+	            console.log("An error occured: " + xhr.status + " " + xhr.statusText);
+             
+            });
+        }
+    });
+	
+	/**
      * Method to handle the profile form submission
      *
      * since 1.0
@@ -500,7 +555,10 @@ $('document').ready(function() {
                 $.ajax(
                     {
                         url: user_url,
-                        method: 'GET'
+                        method: 'GET',
+                        headers: { 
+                         	'Authorization': 'Bearer ' + getAccessToken()
+                        }
                     }
             
                 ).done(function(server_data) {
@@ -642,6 +700,16 @@ $('document').ready(function() {
 		
 		            if ( path == 'profile' ) {
 			            $('span#user-id').text(result.data.id);
+
+                        if ( result.data.coupon_id > 0 ) {
+	                        $('form#profile-form .paid-subscriber').css({'display': 'none'});
+                            $('form#profile-form .free-subscriber .coupon_added').text(result.data.coupon_added);
+                            $('form#profile-form .free-subscriber').css({'display': 'block'});
+	
+                        } else {
+	                        $('form#profile-form .paid-subscriber').css({'display': 'block'});
+                            $('form#profile-form .free-subscriber').css({'display': 'none'});
+                        }
 
                         $('form#profile-form input, form#profile-form select').each(
                             function(index){ 
