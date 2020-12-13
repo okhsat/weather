@@ -5,7 +5,9 @@ use Phalcon\Loader;
 use Models\BaseModel;
 use Models\User;
 use Models\City;
+use Models\Coupon;
 
+// Set up the application configuration as a service
 $di->setShared('config', function () {
     $config = include __DIR__ . '/config.php';
     
@@ -36,6 +38,7 @@ $authorization = $app->request->getHeader('authorization');
 $token         = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $authorization));
 $token         = !empty($token) ? $token : $_COOKIE['access_token'];
 
+// Set up the application loader for autoloading of the required classes
 $loader->registerDirs(
     [
         $config->application->modelsDir
@@ -47,7 +50,7 @@ $loader->registerDirs(
 )->register();
 
 /**
- * Function to get an access token
+ * Method to get an access token
  *
  * @return string         The access token
  * @since  1.0
@@ -75,7 +78,7 @@ function getToken()
 }
 
 /**
- * Function to validate the provided access token
+ * Method to validate the provided access token
  *
  * @return string           True if valid, false otherwise
  * @since  1.0
@@ -100,7 +103,7 @@ function validateToken()
 }
 
 /**
- * Function to get the user oauth data
+ * Method to get the user oauth data
  *
  * @return array      The user oauth data
  * @since  1.0
@@ -130,7 +133,7 @@ function getUserAuthData()
 }
 
 /**
- * Function to get the user profile data by its email
+ * Method to get the user profile data by its email
  *
  * @param  string      $email      The given user email
  * @return array                   The user profile data
@@ -144,9 +147,11 @@ function getUserProfileData($email)
         throw new Exception('Could not find the user!', 3);
     }
     
-    $user_data             = $user->toArray();
-    $user_data['city_ids'] = [];
-    $city_ids              = explode(',', $user->city_ids);
+    $user_data                 = $user->toArray();
+    $user_data['coupon_id']    = (int) $user_data['coupon_id'];
+    $user_data['coupon_added'] = !empty($user_data['coupon_added']) ? BaseModel::dateToReadable($user_data['coupon_added']) : '';
+    $user_data['city_ids']     = [];
+    $city_ids                  = explode(',', $user->city_ids);
     
     if ( count($city_ids) ) {
         foreach ( $city_ids as $cid ) {
@@ -162,10 +167,82 @@ function getUserProfileData($email)
 }
 
 /**
- * Method to retrieve the cities and their weather state
+ * Method to validate and add a coupon code for the current user
  *
- * @param  string      $token     The given access token
- * @return string                 True if valid, false otherwise
+ * @return JSON
+ * @since  1.0
+ */
+$app->post(
+    '/api/coupon',
+    function () {
+        try {
+            $data           = [];
+            $data['data']   = [];
+            $data['status'] = 'failed';
+            $post           = $this->request->getPost();
+            
+            if ( !validateToken() ) {
+                throw new Exception('Invalid Request!', 3);
+            }
+            
+            if ( !isset($post['coupon']) || empty(trim($post['coupon'])) ) {
+                throw new Exception('Coupon is not given!', 101);
+            }
+            
+            $coupon = Coupon::findFirst("code = '".$post['coupon']."' AND status = 'A'");
+            
+            if ( !is_object($coupon) ) {
+                throw new Exception('Invalid promotion code!', 3);
+            }
+            
+            $user_data = getUserAuthData();
+            $user      = User::findFirst("email = '".$user_data['username']."'");
+            
+            if ( !is_object($user) ) {
+                throw new Exception('Could not find the user!', 3);
+            }
+            
+            if ( (int) $user->coupon_id > 0 ) {
+                throw new Exception('You have already activated a valid promotion code!', 111);
+            }
+            
+            $c_user = User::findFirst("coupon_id = '".$coupon->id."'");
+            
+            if ( is_object($c_user) ) {
+                throw new Exception('The promotion code has been used by another user!', 3);
+            }
+            
+            $c_data              = [];
+            $c_data['coupon_id'] = $coupon->id;
+            
+            if ( !$user->bind($c_data) ) {
+                throw new Exception('Could not bind the given data to the model.', 235, $user->getCurExc());
+            }
+            
+            if ( !$user->check() ) {
+                throw new Exception('The given data are not valid.', 235, $user->getCurExc());
+            }
+            
+            if ( !$user->save() ) {
+                throw new Exception('Could not save the data into the database.', 235, $user->getCurExc());
+            }
+            
+            $c_data['coupon_added'] = BaseModel::dateToReadable($user->coupon_added);
+            $data['data']           = $c_data;
+            $data['status']         = 'success';
+            
+        } catch (Exception $e) {
+            $data['msg'] = $e->getMessage();
+        }
+        
+        echo json_encode($data);
+    }
+);
+
+/**
+ * Method to retrieve the cities and their weather state and the subscribed cities of the current user
+ *
+ * @return JSON
  * @since  1.0
  */
 $app->get(
@@ -175,13 +252,8 @@ $app->get(
             $data           = [];
             $data['data']   = [];
             $data['status'] = 'failed';
-            
-            if ( !validateToken() ) {
-                throw new Exception('Invalid Request!', 3);
-            }
-            
-            $user_data = getUserAuthData();
-            $cities    = City::find("status = 'A'");
+            $user_data      = getUserAuthData();
+            $cities         = City::find("status = 'A'");
             
             if ( !is_object($cities) || $cities === false ) {
                 throw new Exception('Could not get the cities information!', 3);
@@ -210,10 +282,15 @@ $app->get(
     }
 );
 
-// Retrieves user 
+/**
+ * Method to retrieve the current user profile data
+ *
+ * @return JSON
+ * @since  1.0
+ */
 $app->get(
     '/api/user',
-    function () use ($config) {
+    function () {
         try {
             $data           = [];
             $data['data']   = [];
@@ -252,7 +329,12 @@ $app->get(
     }
 );
 
-// Updates user based on primary key
+/**
+ * Method to update the current user profile data
+ *
+ * @return JSON
+ * @since  1.0
+ */
 $app->put(
     '/api/user',
     function () use ($config, $token) {
@@ -271,6 +353,8 @@ $app->put(
             parse_str($this->request->getPut('form'), $post);
             
             unset($post['role']);
+            unset($post['coupon_id']);
+            unset($post['coupon_added']);
             
             if ( isset($post['password']) && isset($post['password_confirm']) && !empty(trim($post['password'])) && trim($post['password']) != trim($post['password_confirm']) ) {
                 throw new Exception('The confirmation of your password is not the same as it!', 3);
@@ -317,7 +401,12 @@ $app->put(
     }
 );
 
-// Adds a new user
+/**
+ * Method to add a new user
+ *
+ * @return JSON
+ * @since  1.0
+ */
 $app->post(
     '/api/user',
     function () use ($config) {
@@ -346,6 +435,9 @@ $app->post(
             $access_token = getToken();
             $user         = new User();
             $post['role'] = 'general_user';
+            
+            unset($post['coupon_id']);
+            unset($post['coupon_added']);
             
             if ( !$user->bind($post) ) {
                 throw new Exception('Could not bind the given data to the model.', 235, $user->getCurExc());
@@ -390,7 +482,12 @@ $app->post(
     }
 );
 
-// Deletes the current user
+/**
+ * Method to delete the current user profile data
+ *
+ * @return JSON
+ * @since  1.0
+ */
 $app->delete(
     '/api/user',
     function () {

@@ -158,6 +158,7 @@ class User extends BaseModel
     {
         $this->_curExc = null;
         $new           = !$this->id;
+        $no_coupon     = !$this->coupon_id;
         $status        = trim($this->status);
         
         unset($array['id']);
@@ -208,6 +209,10 @@ class User extends BaseModel
         }        
         
         $date = date('Y-m-d H:i:s', time()); // Greenwich Mean Date and Time To MySQL
+        
+        if ( $no_coupon && $this->coupon_id > 0 ) {
+            $this->coupon_added = $date;
+        }
         
         if ($new) {
             $this->created = $date;
