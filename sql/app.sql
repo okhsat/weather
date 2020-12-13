@@ -4,8 +4,8 @@
  Source Server         : App
  Source Server Type    : MySQL
  Source Server Version : 100414
- Source Host           : 141.136.41.1:3306
- Source Schema         : u352767641_app
+ Source Host           : 000.000.000.000:3306
+ Source Schema         : app
 
  Target Server Type    : MySQL
  Target Server Version : 100414
