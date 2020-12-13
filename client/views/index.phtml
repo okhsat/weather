@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"              content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description"           content="General App">
+    <meta name="keywords"              content="General App">
+
+    <title>Weather App</title>    
+    
+    <link rel="canonical" href="{{ domain|default('') }}" />
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico"> 
+    <link href="/vendor/magnific-popup/magnific-popup.css"            rel="stylesheet">
+    <link href="/vendor/select2/css/select2.min.css"                  rel="stylesheet">
+    <link href="/vendor/slick/slick.css"                              rel="stylesheet">
+    <link href="/vendor/font-awesome/css/font-awesome.min.css"        rel="stylesheet">
+    <link href="/css/main.css?ver=01"                                 rel="stylesheet">
+    <link href="/css/custom.css?ver=01"                               rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700&amp;subset=latin-ext" rel="stylesheet">
+    <link href="/font/icons/style.css"                                rel="stylesheet">
+    <script src="/vendor/snap.svg-min.js"></script>
+    <script src="/vendor/modernizr.min.js"></script>
+</head>
+
+<body>
+    <div class="c-site-wrapper" id="app">        
+        <div class="c-off-canvas">
+            <div class="c-off-canvas__inner">
+                <nav class="c-off-canvas__nav">
+                    <ul class="c-off-canvas__list">
+                        <li class="c-off-canvas__item user-access">
+                            <a class="c-off-canvas__link" href="/">Cities</a>
+                        </li>                        
+                        <li class="c-off-canvas__item">
+                            <a class="c-off-canvas__link" href="/what-is-it">What is it?</a>
+                        </li>
+                        <li class="c-off-canvas__item">
+                            <a class="c-off-canvas__link" href="/how-to-use-it">How to use it?</a>
+                        </li>
+                        <li class="c-off-canvas__item">
+                            <a class="c-off-canvas__link" href="/get-started">Get started!</a>
+                        </li>                    
+                        <li class="c-off-canvas__item has-user-nav user-access">
+                            <a class="c-off-canvas__link" href="/profile">Profile</a>
+                            <ul class="c-off-canvas__user-nav">
+                                <li class="c-off-canvas__item">
+                                    <a class="c-off-canvas__link" href="/profile">Member Info</a>
+                                </li>
+                                <li class="c-off-canvas__item">
+                                    <a class="c-off-canvas__link user-sign-out" href="">Sign out</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="c-off-canvas__item has-user-nav visitor-access">
+                            <a class="c-off-canvas__link" href="#">Start</a>
+                            <ul class="c-off-canvas__user-nav">
+                                <li class="c-off-canvas__item">
+                                    <a class="c-off-canvas__link" href="/register">Register</a>
+                                </li>
+                                <li class="c-off-canvas__item c-off-canvas__item--before-bracket">
+                                    <a class="c-off-canvas__link" href="/login">Login</a>
+                                </li>                                
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <a class="c-off-canvas__user" href="/profile">
+                    <span class="c-site-nav__user o-flag">
+                        <span class="c-site-nav__user-img o-flag__img">
+                            <i class="c-site-nav__user-icon icon-user-circle-o">
+                                <span class="u-hidden-visually">User:</span>
+                            </i>
+                        </span>
+                        <span class="c-site-nav__user-body o-flag__body">
+                            <span class="c-site-nav__user__name"></span>
+                        </span>
+                    </span>
+                </a>
+                
+                <button class="c-off-canvas__close" id="c-off-canvas__close" type="button">
+                    <i class="icon-close">
+                        <span class="u-hidden-visually">close</span>
+                    </i>
+                </button>
+            </div>
+
+            <div class="c-off-canvas__morph-shape" id="c-off-canvas__morph-shape" data-morph-open="M-7.312,0H15c0,0,66,113.339,66,399.5C81,664.006,15,800,15,800H-7.312V0z;M-7.312,0H100c0,0,0,113.839,0,400c0,264.506,0,400,0,400H-7.312V0z">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 800" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="Gradient1" x1="0" x2="0" y1="0" y2="1">
+                            <stop class="stop1" offset="0%" />
+                            <stop class="stop2" offset="100%" />
+                        </linearGradient>
+                        <style type="text/css">
+                            .stop1 {
+                                stop-color: #00b0c4;
+                            }
+
+                            .stop2 {
+                                stop-color: #16b68f;
+                            }
+                        </style>
+                    </defs>
+
+                    <path d="M-7.312,0H0c0,0,0,113.839,0,400c0,264.506,0,400,0,400h-7.312V0z" fill="url(#Gradient1)" />
+                </svg>
+            </div>
+        </div>
+        
+        <div class="c-site-inner">
+            <header class="c-site-header c-site-header--sticky">
+                <div class="c-site-header__wrapper o-wrapper">                    
+                    <div class="c-site-header__flag o-flag o-flag--middle">
+                        <div class="c-site-header__img o-flag__img">
+                            <a class="c-site-logo" href="/">
+                                <strong class="u-hidden-visually">Weather App</strong>
+                            </a>
+                        </div>
+                        <div class="c-site-header__body o-flag__body">
+                            <button id="open-off-canvas" class="c-site-burger" type="button">
+                                <i class="icon-burger-menu">
+                                    <span class="u-hidden-visually">menu</span>
+                                </i>
+                            </button>
+                            
+                            <nav class="c-site-nav c-site-nav--primary" id="site-nav">
+                                <ul class="c-site-nav__list">
+                                    <li class="c-site-nav__item user-access" display="inline-block">
+                                        <a class="c-site-nav__link" href="/">Cities</a>
+                                    </li>
+                                    <li class="c-site-nav__item">
+                                        <a class="c-site-nav__link" href="/what-is-it">What is it?</a>
+                                    </li>
+                                    <li class="c-site-nav__item">
+                                        <a class="c-site-nav__link" href="/how-to-use-it">How to use it?</a>
+                                    </li>
+                                    <li class="c-site-nav__item">
+                                        <a class="c-site-nav__link" href="/get-started">Get started!</a>
+                                    </li>
+                                </ul>
+                            </nav>
+
+                            <nav class="c-site-nav c-site-nav--secondary" id="site-nav-secondary">
+                                <ul class="c-site-nav__list user-access">
+                                    <li class="c-site-nav__item has-dropdown">                                                    
+                                        <a class="c-site-nav__link has-user" href="/profile">
+                                            <span class="c-site-nav__user o-flag">
+                                                <span class="c-site-nav__user-img o-flag__img">
+                                                    <i class="c-site-nav__user-icon icon-user-circle-o">
+                                                        <span class="u-hidden-visually">User:</span>
+                                                    </i>
+                                                </span>
+                                                <span class="c-site-nav__user-body o-flag__body">
+                                                    <span class="c-site-nav__user__name"></span>
+                                                </span>
+                                            </span>
+                                        </a>
+
+                                        <ul class="c-dropdown c-dropdown--sm c-dropdown--right">
+                                            <li class="c-dropdown__item">
+                                                <a class="c-dropdown__link" href="/profile">Member Info</a>
+                                            </li>
+                                            <li class="c-dropdown__item">
+                                                <a class="c-dropdown__link user-sign-out" href="">Sign out</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <ul class="c-site-nav__list visitor-access">  
+                                    <li class="c-site-nav__item">
+                                        <a class="c-site-nav__link" href="/register">Register</a>                                            
+                                    </li>                                            
+                                    <li class="c-site-nav__item c-site-nav__item--before-bracket">
+                                        <a class="c-site-nav__link" href="/login">Login</a>
+                                    </li>                                            
+                                </ul>
+                            </nav>  
+                        </div>                        
+                    </div>                    
+                </div>                
+            </header>
+            
+            <div class="c-site-body">
+                <div class="c-section user-access cities">
+                    <div class="o-wrapper">
+                        <div class="c-heading u-align-center">
+                            <h1 class="u-h2 u-color-secondary u-font-medium">Cities' Weather</h1>
+                            <h5 class="u-h5 u-color-primary u-font-small">Select the cities which you want to be informed about their weather.</h1>
+                        </div>            
+                        <div class="c-content">
+                            <form action="/" method="POST" id="cities-form" autocomplete="off">
+                                <div class="c-sets o-layout"></div>
+                            </form>
+                            
+                            <div id="city-pattern" style="display: none;">                            
+                                <div class="c-sets__item o-layout__item u-margin-bottom-large u-1/3@tablet" id="city_id">                            
+                                    <a class="c-set">
+                                        <h4 class="c-set__title">
+                                            <span class="c-temprature">
+                                                <span class="val"></span>
+                                                <span>°C</span>
+                                            </span>                                            
+                                            <span class="c-name"></span>
+                                        </h4>                                
+                                        <span class="c-set__detail">                                    
+                                            <span class="c-weather"></span>
+                                        </span>
+                                        <img class="c-set__image" src="/img/cities/city.jpg" alt="">
+                                    </a>
+                                    <div class="c-check c-check--inline u-font-size-large">
+                                        <input class="c-check__input" type="checkbox" name="city_ids[]" value="">
+                                        <span class="c-check__text c-check__text@unchecked">Select</span>
+                                        <span class="c-check__text c-check__text@checked u-color-success-2 u-font-medium">Selected</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>            
+            
+                <div class="c-section user-access profile">
+                    <div class="o-wrapper">            
+                        <div class="c-content">
+                            <div class="o-layout o-layout--reverse o-layout--has-margins<tablet">
+                                <div class="o-layout__item u-3/3@desktop">
+                                    <div class="c-box c-box--bare<desktop" data-equal-height="profile">
+                                        <div class="c-box__header u-hide u-show@desktop">
+                                            <h1 class="c-box__heading u-color-secondary">
+                                                Member Info (ID: <span id="user-id"></span>)
+                                            </h1>
+                                        </div>
+
+                                        <div class="c-box__body">
+                                            <h2 class="u-h4 u-font-medium">Personel Info</h2>
+
+                                            <form action="/" method="POST" id="profile-form" enctype="multipart/form-data" autocomplete="off" class="c-profile__form">
+                                                <div class="c-form">
+                                                    <div class="o-layout">
+                                                        <div class="o-layout__item u-1/1@tablet">
+                                                            <div class="o-layout">
+                                                                <div class="o-layout__item u-1/2@tablet">
+                                                                    <div class="c-form__group">
+                                                                        <label for="profile_name" class="c-form__label">Full name</label>
+
+                                                                        <div class="c-form__field">
+                                                                             <input class="c-form__input c-form__input--text" id="profile_name" name="name" type="text" value="" placeholder="İsminizi giriniz..." data-rule-required="true">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="c-form__group">
+                                                                        <label for="profile_gender" class="c-form__label">Gender</label>
+                                                            
+                                                                        <div class="c-form__field">
+                                                                            <div class="c-check-list c-check-list--inline">
+                                                                                <div class="c-check-list__item">
+                                                                                    <label class="c-check c-check--circle">
+                                                                                         <input class="c-check__input" type="radio" id="profile_gender_female" name="gender" data-rule-required="true" value="female">
+                                                                                         <span class="c-check__text">Woman</span>
+                                                                                    </label>
+                                                                                </div>
+
+                                                                                <div class="c-check-list__item">
+                                                                                    <label class="c-check c-check--circle">
+                                                                                        <input class="c-check__input" type="radio" id="profile_gender_male" name="gender" data-rule-required="true" value="male">
+                                                                                        <span class="c-check__text">Man</span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="c-form__group">
+                                                                        <label for="profile_phone" class="c-form__label">Phone</label>
+                                                            
+                                                                        <div class="c-form__field" id="check-phone">
+                                                                            <input class="c-form__input c-form__input--text" id="profile_phone" name="phone" type="tel" value="" data-validation-length="min14" data-rule-required="true">
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="c-form__group">
+                                                                        <label for="profile_city" class="c-form__label">City</label>
+                                                            
+                                                                        <div class="c-form__field" id="check-city">
+                                                                            <input class="c-form__input c-form__input--text" id="profile_city" name="city" type="text" value="">
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="c-form__group">
+                                                                        <label for="profile_language" class="c-form__label">Language</label>                                                            
+                                                            
+                                                                        <div class="c-form__field">
+                                                                            <select class="c-form__input" id="profile_language" name="cid" style="width: 100%;" data-ride="select2">
+                                                                                <option value="">Select ...</option>
+                                                                                <option value="tr">Turkish</option>
+                                                                                <option value="en">English</option>
+                                                                            </select>
+                                                                        </div>                                                            
+                                                                    </div>
+                                                                    
+                                                                    <div class="c-form__group">
+                                                                        <label for="profile_image" class="c-form__label">Photo</label>
+
+                                                                        <div class="c-form__field" id="profile_image">
+                                                                            <input name="image" type="file" id="image" class="c-form__input">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <h2 class="u-h4 u-font-medium u-padding-top-large">
+                                                     Account Information
+                                                </h2>                                
+
+                                                <div class="c-form">
+                                                    <div class="o-layout">
+                                                        <div class="o-layout__item u-5/6@tablet">
+                                                            <div class="o-layout">
+                                                                <div class="o-layout__item u-1/2">
+                                                                    <div class="c-form__group">
+                                                                        <label for="profile_email" class="c-form__label">Email</label>
+
+                                                                        <div class="c-form__field" id="check-email">
+                                                                            <input class="c-form__input c-form__input--text" id="profile_email" name="email" type="email" value="" placeholder="ornek@email.com" data-validation="email required" data-rule-required="true">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="o-layout">
+                                                                <div class="o-layout__item u-1/2">
+                                                                    <div class="c-form__group">
+                                                                        <label for="profile_password" class="c-form__label">Password</label>
+                                                            
+                                                                        <div class="c-form__field">
+                                                                             <input class="c-form__input c-form__input--text" id="profile_password" name="password" type="password" placeholder="" data-validation="confirmation" data-validation-confirm="password_confirm" data-rule-required="true">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                    
+                                                            
+                                                                <div class="o-layout__item u-1/2">
+                                                                    <div class="c-form__group">
+                                                                        <label for="profile_password_confirm" class="c-form__label">Password again</label>
+                                                            
+                                                                        <div class="c-form__field">
+                                                                             <input class="c-form__input c-form__input--text" id="profile_password_confirm" name="password_confirm" type="password" placeholder="" data-rule-required="true">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                                        
+                                                </div>
+                                    
+                                                <div class="c-form__group c-form__group--submit u-margin-bottom-none u-align-right">
+                                                    <button class="c-btn c-btn--small c-btn--secondary" type="submit">Save</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="c-section c-section--register visitor-access register">
+                    <div class="o-wrapper">
+                        <div class="c-heading u-align-center">
+                            <h1 class="u-h2 u-color-secondary u-font-medium">Register</h1>
+                        </div>
+
+                        <div class="c-content">
+                            <div class="c-auth">
+                                <form class="c-auth__form" id="register-form" method="POST" action="/">       
+                                    <div class="c-form">
+                                        <div class="c-form__group">
+                                            <label for="register_name" class="c-form__label">Full name</label>
+                                            <div class="c-form__field">
+                                                <input class="c-form__input c-form__input--text" id="register_name" name="name" type="text" value="" placeholder="" data-validation="required" data-rule-required="true">
+                                            </div>
+                                        </div>
+
+                                        <div class="c-form__group">
+                                            <label for="register_email" class="c-form__label">Email</label>
+
+                                            <div class="c-form__field" id="check-email">
+                                                <input class="c-form__input c-form__input--text" id="register_email" name="email" type="email" value="" placeholder="" data-validation="required email" data-rule-required="true">
+                                            </div>
+                                        </div>
+
+                                        <div class="c-form__group">
+                                            <label for="register_phone" class="c-form__label">Phone</label>
+                                    
+                                            <div class="c-form__field" id="check-phone">
+                                                <input class="c-form__input c-form__input--text" id="register_phone" name="phone" type="tel" value="" placeholder="" data-validation="required length" data-validation-length="5-20" data-rule-required="true">
+                                            </div>
+                                        </div>
+
+                                        <div class="c-form__group">
+                                            <label for="register_gender" class="c-form__label">Gender</label>
+                                            <div class="c-form__field">
+                                                <div class="c-check-list c-check-list--inline">
+                                                    <div class="c-check-list__item">
+                                                        <label class="c-check c-check--circle">
+                                                            <input class="c-check__input" type="radio" id="register_gender_female" name="gender" data-rule-required="true" value="female">
+                                                            <span class="c-check__text">Woman</span>
+                                                        </label>
+                                                    </div>
+                                            
+                                                    <div class="c-check-list__item">
+                                                        <label class="c-check c-check--circle">
+                                                            <input class="c-check__input" type="radio" id="register_gender_male" name="gender" data-rule-required="true" value="male">
+                                                            <span class="c-check__text">Man</span>
+                                                        </label>
+                                                    </div>    
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="c-form__group">
+                                            <label for="register_password" class="c-form__label">Password</label>
+                                            <div class="c-form__field">
+                                                <input class="c-form__input c-form__input--text" id="register_password" name="password" type="password" placeholder="" data-validation="length required" data-validation-length="min7" data-rule-required="true">
+                                            </div>
+                                        </div>
+
+                                        <div class="c-form__group">
+                                            <label for="register_password_confirm" class="c-form__label">Password again</label>
+                                            <div class="c-form__field">
+                                                <input class="c-form__input c-form__input--text" id="register_password_confirm" name="password_confirm" type="password" placeholder="" data-validation="confirmation" data-validation-confirm="password" data-rule-required="true">
+                                            </div>
+                                        </div>    
+                                        <div class="c-form__group">
+                                            <label class="c-check">
+                                                <input class="c-check__input" type="checkbox" id="opt_in_aggrement" name="tos_pp_aggreed" data-validation="required" data-rule-required="true">
+                                                <span class="c-check__text">Confirm Agreement</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="c-form__group c-form__group--submit u-margin-bottom-none">
+                                            <button class="c-btn c-btn--block c-btn--secondary" type="submit">Register</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="u-align-center u-padding-top">
+                                <p>
+                                    Have an account?
+                                    <br>
+                                    <a href="/login" class="u-color-secondary u-font-medium">Login</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="c-section c-section--login visitor-access login">                    
+                    <div class="o-wrapper">                
+                        <div class="c-heading u-align-center">
+                            <h1 class="u-h2 u-color-secondary u-font-medium">Login</h1>
+                        </div>
+
+                        <div class="c-content">                    
+                            <div class="c-auth">
+                                <form class="c-auth__form" id="login-form" method="post" action="/" autocomplete="off"> 
+                                    <div class="o-layout">
+                                        <div class="c-form o-layout__item">
+                                            <div class="c-form__group">        
+                                                <label for="login_email" class="c-form__label">Email</label>
+
+                                                <div class="c-form__field">
+                                                    <input class="c-form__input c-form__input--text" id="login_email" name="email" type="email" placeholder="" data-validation="email required"  data-rule-required="true">
+                                                </div>
+                                            </div>
+
+                                            <div class="c-form__group">
+                                                <label for="login_password" class="c-form__label">Password</label>
+
+                                                <div class="c-form__field">
+                                                    <input class="c-form__input c-form__input--text" id="login_password" name="password" type="password" placeholder="*********" data-validation="length required" data-validation-length="min6" data-rule-required="true">
+                                                </div>
+                                            </div>
+
+                                            <!-- 
+                                            <div class="c-form__group">
+                                                <div class="o-layout">
+                                                    <div class="o-layout__item u-1/2">
+                                                        <label class="c-check">
+                                                            <input class="c-check__input" type="checkbox" id="opt_in" name="remember" data-rule-required="true">
+                                                            <span class="c-check__text">Remember me</span>
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="o-layout__item u-1/2 u-align-right">
+                                                        <a href="" class="u-nowrap u-color-secondary">Forgot password</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                             -->
+
+                                            <div class="c-form__group c-form__group--submit u-margin-bottom-none">
+                                                <button class="c-btn c-btn--block c-btn--secondary" type="submit">Login</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>                        
+                            </div>
+
+                            <div class="u-align-center u-padding-top">
+                                <p>
+                                    Not registered yet!
+                                    <br>
+                                    <a href="/register" class="u-color-secondary u-font-medium">Register now</a>
+                                </p>
+                            </div>                    
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+            <div class="c-section what-is-it">                    
+                <div class="o-wrapper">                
+                    <div class="c-heading u-align-center">
+                        <h1 class="u-h2 u-color-secondary u-font-medium">What is it?</h1>
+                    </div>
+
+                    <div class="c-content">
+                        <p>What is it?</p>
+                        <p>Write the article here ...</p>
+                    </div>
+                </div>
+            </div>
+                
+            <div class="c-section how-to-use-it">                    
+                <div class="o-wrapper">                
+                    <div class="c-heading u-align-center">
+                        <h1 class="u-h2 u-color-secondary u-font-medium">How to use it?</h1>
+                    </div>
+
+                    <div class="c-content">
+                        <p>How to use it?</p>
+                        <p>Write the article here ...</p>
+                    </div>
+                </div>
+            </div>
+                
+            <div class="c-section get-started">                    
+                <div class="o-wrapper">                
+                    <div class="c-heading u-align-center">
+                        <h1 class="u-h2 u-color-secondary u-font-medium">Get started!</h1>
+                    </div>
+
+                    <div class="c-content">
+                        <p>Get started!</p>
+                        <p>Write the article here ...</p>
+                    </div>
+                </div>
+            </div>
+                
+            <div class="c-section not-found">                    
+                <div class="o-wrapper">                
+                    <div class="c-heading u-align-center">
+                        <br>
+                        <br>
+                        <br>
+                        <h1 class="u-h2 u-color-secondary u-font-medium" style="font-size: 40px !important;">404<br>NOT FOUND PAGE!</h1>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <div class="o-wrapper">
+                    <div class="u-align-center u-padding-small">
+                        <div>© 2020 Weather App. All rights reserved.</div>
+                    </div>
+                </div>                
+            </footer>
+        </div>
+    </div>
+
+    <script src="/vendor/svgxuse.min.js"></script>
+    <script src="/vendor/jquery-3.1.1.min.js"></script>
+    <script src="/vendor/jquery.easing.min.js"></script>
+    <script src="/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+    <script src="/vendor/select2/js/select2.full.min.js"></script>
+    <script src="/vendor/classie.js"></script>
+    <script src="/vendor/transition.js"></script>
+    <script src="/vendor/collapse.js"></script>
+    <script src="/vendor/tooltip.js"></script>
+    <script src="/vendor/popover.js"></script>
+    <script src="/vendor/classie.js"></script>
+    <script src="/vendor/jquery.matchHeight-min.js"></script>
+    <script src="/vendor/slick/slick.min.js"></script>
+    <script src="/vendor/garand-sticky/jquery.sticky.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <script src="https://lab.alexcican.com/set_cookies/cookie.js"></script>
+    <script type="text/javascript">
+    var base_url      = '<?php echo $base_url; ?>';
+    var auth_url      = '<?php echo $auth_url; ?>';
+    var token_url     = '<?php echo $token_url; ?>';
+    var user_url      = '<?php echo $user_url; ?>';
+    var cities_url    = '<?php echo $cities_url; ?>';
+    var client_id     = '<?php echo $client_id; ?>';
+    var client_secret = '<?php echo $client_secret; ?>';
+    var is_logged_in  = false;
+    var width         = $(window).width();
+	var message_top   = '100px';
+    var message_left  = '30%';
+
+    if ( width < 1024 ) {
+   		message_left   = '20%';
+	}                		
+
+	if ( width < 768 ) {
+   		message_top    = '70px';
+        message_left   = '10%';
+	}
+
+	if ( width < 540 ) {
+	    message_top  = '50px';
+	    message_left = '2%';
+	}
+    </script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
