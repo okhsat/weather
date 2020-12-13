@@ -8,6 +8,7 @@ ini_set('display_errors', 0);
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 
 define('BASE_URL',         'http' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 's' : '') . '://' . $_SERVER['HTTP_HOST']);
+define('PUBLIC_PATH',       __DIR__);
 define('BASE_PATH',         dirname(__DIR__));
 define('SERVICES_PATH',     BASE_PATH . '/services');
 define('AUTH_SERVICE_PATH', SERVICES_PATH . '/auth');

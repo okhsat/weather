@@ -346,6 +346,65 @@ isLoggedIn();
     
 $('document').ready(function() {
 	/**
+     * Method to handle the profile image uploading
+     *
+     * since 1.0
+     */                
+    $('button#upload-profile-image').click( function(e) {
+        e.preventDefault();
+
+        var fd    = new FormData();
+        var files = $('#profile-image')[0].files;
+        
+        if ( is_logged_in && files.length > 0 ) {
+            fd.append('image', files[0]);
+
+            $.ajax(
+                {
+                    url: prf_upload_url,
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + getAccessToken() },
+                    data: fd,
+                    contentType: false,
+                    processData: false
+                }
+            
+            ).done(function(server_data) {
+	            var result;
+
+	            if ( server_data !== null && typeof server_data === 'object' ) {
+		            result = server_data;
+
+	    	    } else {			
+	     		    result = $.parseJSON( $.trim(server_data) );
+	     	    }
+
+                if ( result !== null && typeof result === 'object' && typeof result.status !== 'undefined' ) {
+	                if ( result.status == 'success' ) {
+		                message('success', "Uploading the profile image was successful.");
+                        $('.profile-img img').attr('src', result.data.src);
+                        $('.profile-img').css({'display': 'block'});
+                        $('.profile-img.avatar').css({'display': 'inline-block'});
+                        
+                    } else {
+	                    message('error', "Uploading the profile image failed! " + result.msg);
+	        	        console.log("Uploading the profile image failed! " + result.msg);
+                    }
+
+                } else {
+                    message('error', "Uploading the profile image failed! " + JSON.stringify(result));
+	        	    console.log("Uploading the profile image failed! " + JSON.stringify(result));
+                }
+             
+            }).fail(function(xhr) {
+                message('error', "An error occured: " + xhr.status + " " + xhr.statusText);
+	            console.log("An error occured: " + xhr.status + " " + xhr.statusText);
+             
+            });
+        }
+    });
+
+	/**
      * Method to handle the coupon submission
      *
      * since 1.0
@@ -700,6 +759,12 @@ $('document').ready(function() {
 		
 		            if ( path == 'profile' ) {
 			            $('span#user-id').text(result.data.id);
+
+                        if ( result.data.image_src != '' ) {
+                             $('.profile-img img').attr('src', result.data.image_src);
+                             $('.profile-img').css({'display': 'block'});
+                             $('.profile-img.avatar').css({'display': 'inline-block'});
+	                    }
 
                         if ( result.data.coupon_id > 0 ) {
 	                        $('form#profile-form .paid-subscriber').css({'display': 'none'});
