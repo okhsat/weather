@@ -1,0 +1,177 @@
+.c-site-logo {
+    width: 75px;
+    height: 85px;
+}
+
+a.c-set:hover {
+    cursor: pointer;
+}
+
+.c-set__image {
+    width: 100%;
+}
+
+.c-temprature span.val {
+    font-size: 50px;
+}
+
+.c-name {
+    margin-left: 40px;
+}
+
+.c-set__detail {
+    color: #000;
+    font-weight: 600;
+}
+
+.c-check:hover {
+	cursor: pointer;
+}
+    
+.c-auth {
+    max-width: 400px;
+}
+
+.user-access {
+	display: none;
+}
+
+.visitor-access {
+	display: inherit;
+}    
+
+.message {
+	display: block;
+	opacity: 0;
+	z-index: 9999;
+	position: fixed;
+	top: 10px;
+	left: 30%;
+	width: 40%;
+	min-height: 40px;
+	margin: 0;
+	padding: 10px;
+    line-height: 30px;
+    text-align: center;
+    vertical-align: middle;
+	font-size: 14px;
+	font-weight: 700;
+	color: #333;
+	background: #fff;	
+	border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+	box-shadow: 0 1px 20px #000;
+    -webkit-box-shadow: 0 1px 20px #000;
+    -moz-box-shadow: 0 1px 20px #000;
+	transition: all 1s;
+    -ms-transition: all 1s;
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+}
+
+.message.success {
+	color: #333;
+	background: #A5FFA8;
+}
+
+.message.notice {
+	color: #333;
+	background: #A8E4FF;
+}
+
+.message.warning {
+	color: #fff;
+	background: #FFA126;
+}
+
+.message.error {
+	color: #fff;
+	background: #FF1420;
+}	
+
+.message button.message-close {
+    display: block;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: url(../img/close.png) no-repeat 0 0;
+    background-size: 100% 100%;
+    width: 24px;
+    height: 24px;
+    text-indent: -9999px;
+}
+          
+@media (min-width: 5em) {    
+}
+	
+@media (min-width: 25em) {
+}
+
+@media (min-width: 48em) {
+}
+
+@media (min-width: 64em) {
+}
+
+@media (min-width: 75em) {
+}
+
+@media (max-width: 74.99em) {
+	.message {
+     	width: 60%;
+	}
+}
+
+@media (max-width: 63.99em) {
+	.message {
+     	width: 75%;
+	}	
+}
+
+@media (max-width: 47.99em) {
+	.message {
+     	width: 90%;
+	}	
+	
+	.c-site-logo {
+        width: 53px;
+        height: 65px;
+    }
+}
+
+.mobile-button {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 30px;
+    padding-right: 30px;
+    position: fixed;
+    bottom: 0px;
+    width: auto!important;
+    left: 12px;
+    z-index: 99999;
+    -webkit-backface-visibility: hidden;
+    display: block !important; /* this line is important! */
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+@media screen and (max-width: 767px){
+    /*
+    .mobile-button  {
+        display: none !important;
+    }
+    */
+    .mobile-button {
+        bottom: 15px;
+        border-radius: 5px;
+    }
+}
+
+@media (max-width: 768px){
+   
+}
+
