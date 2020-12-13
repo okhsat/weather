@@ -149,7 +149,8 @@ function getUserProfileData($email)
     
     $user_data                 = $user->toArray();
     $user_data['coupon_id']    = (int) $user_data['coupon_id'];
-    $user_data['coupon_added'] = !empty($user_data['coupon_added']) ? BaseModel::dateToReadable($user_data['coupon_added']) : '';
+    $user_data['coupon_added'] = !empty($user_data['coupon_added']) ? BaseModel::dateToReadable($user_data['coupon_added'])          : '';
+    $user_data['image_src']    = !empty($user_data['image'])        ? BASE_URL.'/users/'.$user_data['image'].'?'.rand(1,10000000000) : '';
     $user_data['city_ids']     = [];
     $city_ids                  = explode(',', $user->city_ids);
     
@@ -165,6 +166,104 @@ function getUserProfileData($email)
     
     return $user_data;
 }
+
+/**
+ * Method to upload the current user profile image
+ *
+ * @return JSON
+ * @since  1.0
+ */
+$app->post(
+    '/api/prf-upload',
+    function () {
+        try {
+            $data           = [];
+            $data['data']   = [];
+            $data['status'] = 'failed';
+            
+            if ( !isset($_FILES['image']) || !is_file($_FILES['image']['tmp_name']) ) {
+                throw new Exception('Image file is not given!', 101);
+            }
+            
+            $user_data = getUserAuthData();
+            $user      = User::findFirst("email = '".$user_data['username']."'");
+            
+            if ( !is_object($user) ) {
+                throw new Exception('Could not find the user!', 3);
+            }
+            
+            $target_dir  = PUBLIC_PATH . '/users/';
+            $image_name  = basename($_FILES['image']['name']);
+            $image_type  = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+            $target_file = $target_dir . $user->id.'.'.$image_type;
+            $check       = getimagesize($_FILES['image']['tmp_name']);
+            
+            // Check if image file is a actual image or fake image
+            if ( $check === false ) {
+                throw new Exception('The uploaded file is not an image!', 235);
+            }
+            
+            $image_width  = $check[0];
+            $image_height = $check[1];
+            
+            // Allow certain file formats
+            if( !in_array($image_type, ['jpg', 'png', 'jpeg', 'gif']) ) {
+                throw new Exception('The uploaded file type is not an allowed image type!', 235);
+            }
+            
+            // Check file size
+            if ( $_FILES['image']['size'] > 1000000 ) {
+                throw new Exception('The uploaded file is too large!', 235);
+            }
+            
+            // Check image size
+            if ( $image_width < 50 && $image_height < 50 ) {
+                throw new Exception('The uploaded image is too small!', 235);
+            }
+            
+            // Create the customers folder if missing
+            if ( !file_exists($target_dir) ) {
+                mkdir($target_dir, 0777, false);
+                
+            } else if ( file_exists($target_file) ) {
+                // If the user file in existing directory already exist, delete it
+                unlink($target_file);
+            }
+            
+            if ( !move_uploaded_file($_FILES['image']['tmp_name'], $target_file) ) {
+                throw new Exception('Unable to upload the image '.$target_file, 235);
+            }
+            
+            if ( !chmod($target_file, 0644) ) {
+                throw new Exception('Unable to change the permission of the image '.$target_file, 235);
+            }
+            
+            $i_data          = [];
+            $i_data['image'] = $user->id.'.'.$image_type;            
+            
+            if ( !$user->bind($i_data) ) {
+                throw new Exception('Could not bind the given data to the model.', 235, $user->getCurExc());
+            }
+            
+            if ( !$user->check() ) {
+                throw new Exception('The given data are not valid.', 235, $user->getCurExc());
+            }
+            
+            if ( !$user->save() ) {
+                throw new Exception('Could not save the data into the database.', 235, $user->getCurExc());
+            }
+            
+            $i_data['src']  = BASE_URL.'/users/'.$i_data['image'].'?'.rand(1,10000000000);
+            $data['data']   = $i_data;
+            $data['status'] = 'success';
+            
+        } catch (Exception $e) {
+            $data['msg'] = $e->getMessage();
+        }
+        
+        echo json_encode($data);
+    }
+);
 
 /**
  * Method to validate and add a coupon code for the current user
