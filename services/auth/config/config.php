@@ -30,7 +30,7 @@ $config = [
 
     'database' => [
         'adapter'  => 'Mysql',
-        'host'     => '141.136.41.1',
+        'host'     => 'host',
         'dbname'   => 'dbname',
         'username' => 'username',
         'password' => 'password',

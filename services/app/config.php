@@ -9,10 +9,10 @@ return new Config(
         ],
         
         'DB' => [
+            'host'     => 'host',
             'dbname'   => 'dbname',
             'username' => 'username',
             'password' => 'password',
-            'host'     => '141.136.41.1',
             'charset'  => 'utf8',
             'adapter'  => 'Mysql'
         ],

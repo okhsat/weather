@@ -29,9 +29,12 @@ $di->set(
     }
 );
 
-$config = $di->getConfig();
-$loader = new Loader(); // Use Loader() to autoload
-$app    = new Micro($di); // Create and bind the DI to the application
+$config        = $di->getConfig();
+$loader        = new Loader(); // Use Loader() to autoload
+$app           = new Micro($di); // Create and bind the DI to the application
+$authorization = $app->request->getHeader('authorization');
+$token         = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $authorization));
+$token         = !empty($token) ? $token : $_COOKIE['access_token'];
 
 $loader->registerDirs(
     [
@@ -72,17 +75,16 @@ function getToken()
 }
 
 /**
- * Function to validate the given access token
+ * Function to validate the provided access token
  *
- * @param  string      $token     The given access token
- * @return string                 True if valid, false otherwise
+ * @return string           True if valid, false otherwise
  * @since  1.0
  */
-function validateToken($token)
+function validateToken()
 {
-    GLOBAL $config;
+    GLOBAL $config, $token;
     
-    $token_result = BaseModel::sendRequest($config->api->token_url, [], 'POST', ['Authorization: Bearer ' . $_COOKIE['access_token']]);
+    $token_result = BaseModel::sendRequest($config->api->token_url, [], 'POST', ['Authorization: Bearer ' . $token]);
     
     if ( $token_result === false ) {
         throw new Exception('Could not connect to the API.');
@@ -105,13 +107,13 @@ function validateToken($token)
  */
 function getUserAuthData()
 {
-    GLOBAL $config;
+    GLOBAL $config, $token;
     
-    if ( !isset($_COOKIE['access_token']) ) {
+    if ( empty($token) ) {
         throw new Exception('Invalid Request!', 1);
     }
     
-    $result = BaseModel::sendRequest($config->api->user_url, [], 'GET', ['Authorization: Bearer ' . $_COOKIE['access_token']]);
+    $result = BaseModel::sendRequest($config->api->user_url, [], 'GET', ['Authorization: Bearer ' . $token]);
     
     if ( $result === false ) {
         throw new Exception('Could not connect to the Authentication API.');
@@ -174,7 +176,7 @@ $app->get(
             $data['data']   = [];
             $data['status'] = 'failed';
             
-            if ( !validateToken($_COOKIE['access_token']) ) {
+            if ( !validateToken() ) {
                 throw new Exception('Invalid Request!', 3);
             }
             
@@ -253,7 +255,7 @@ $app->get(
 // Updates user based on primary key
 $app->put(
     '/api/user',
-    function () use ($config) {
+    function () use ($config, $token) {
         try {
             $data           = [];
             $data['data']   = [];
@@ -287,7 +289,7 @@ $app->put(
             if ( $user->email != $email || (isset($post['password']) && !empty(trim($post['password']))) ) {
                 $user_data['username'] = $user->email;
                 $user_data['password'] = $post['password'];
-                $api_result            = BaseModel::sendRequest($config->api->user_url, $user_data, 'PUT', ['Authorization: Bearer ' . $_COOKIE['access_token']]);
+                $api_result            = BaseModel::sendRequest($config->api->user_url, $user_data, 'PUT', ['Authorization: Bearer ' . $token]);
                 
                 if ( $api_result === false ) {
                     throw new Exception('Could not connect to the Authentication API.');
