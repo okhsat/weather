@@ -1,0 +1,16 @@
+{
+	"name" : "okhtay/general",
+	"description" : "The General Application of Okhtay",
+	"type" : "project",
+	"license" : "Free",
+	"authors" : [{
+			"name" : "Okhtay Sattari",
+			"email" : "okhsat@gmail.com"
+		}
+	],
+	"minimum-stability" : "dev",
+	"require" : {
+		"league/oauth2-server" : "7.2.*",
+		"tegaphilip/padlock" : "9999999-dev"
+	}
+}
