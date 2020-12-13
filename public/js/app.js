@@ -613,7 +613,7 @@ $('document').ready(function() {
 
     if ( is_logged_in ) {
 	   /**
-        * Method to get the data for the profile page
+        * Method to get the data for the profile page and etc.
         *
         * since 1.0
         */
@@ -621,7 +621,9 @@ $('document').ready(function() {
             {
                 url: user_url,
                 method: 'GET',
-                headers: { 'Authorization': 'Bearer ' + $.cookie('access_token') }
+                headers: { 
+                   	'Authorization': 'Bearer ' + getAccessToken()
+                }
             }
             
         ).done(function(server_data) {
@@ -716,7 +718,7 @@ $('document').ready(function() {
                 {
                     url: cities_url,
                     method: 'GET',
-                    headers: { 'Authorization': 'Bearer ' + $.cookie('access_token') }
+                    headers: { 'Authorization': 'Bearer ' + getAccessToken() }
                 }
             
             ).done(function(server_data) {
