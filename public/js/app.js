@@ -464,7 +464,7 @@ $('document').ready(function() {
      *
      * since 1.0
      */                
-    $('form#profile-form button[type=submit]').click( function(e) {
+    $('form#profile-form').submit( function(e) {
         e.preventDefault();
         
         if ( is_logged_in ) {
@@ -515,7 +515,7 @@ $('document').ready(function() {
      *
      * since 1.0
      */                
-    $('form#register-form button[type=submit]').click( function(e) {
+    $('form#register-form').submit( function(e) {
         e.preventDefault();
         
         $.ajax(
@@ -578,7 +578,7 @@ $('document').ready(function() {
      *
      * since 1.0
      */                
-    $('form#login-form button[type=submit]').click( function(e) {
+    $('form#login-form').submit( function(e) {
         e.preventDefault();
         
         $.ajax(
