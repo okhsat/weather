@@ -30,10 +30,10 @@ $config = [
 
     'database' => [
         'adapter'  => 'Mysql',
-        'host'     => 'host',
-        'dbname'   => 'dbname',
-        'username' => 'username',
-        'password' => 'password',
+        'host'     => '141.136.41.1',
+        'dbname'   => 'u352767641_oauth',
+        'username' => 'u352767641_oauth',
+        'password' => 'D$5hFJA$ZR0c',
         'port'     => '3306'
     ],
 

@@ -559,9 +559,10 @@ $app->post(
                 
             } else if ( $api_result->status == 'error' ) {
                 throw new Exception('Could not get the data from the Authentication API. - Error: ' . $api_result->message . ' - Code: '.$api_result->code);
+                
+            } else if ( $api_result->status != 'success' ) {
+                throw new Exception('Could not save the user data.', 235);
             }
-            
-            setcookie('user_auth_id', $api_result->data->user_id, time() + (24 * 3600));
             
             if ( !$user->save() ) {
                 throw new Exception('Could not save the data into the database.', 235, $user->getCurExc());

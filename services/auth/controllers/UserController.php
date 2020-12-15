@@ -69,49 +69,49 @@ class UserController extends BaseController
 
         try {
             $request = ServerRequest::fromGlobals();
-            
-            $bearerTokenValidator->validateAuthorization($request);
+            $request = $bearerTokenValidator->validateAuthorization($request);
+            $date    = date('Y-m-d H:i:s', time()); // Greenwich Mean Date and Time To MySQL
             
             if ( strtolower($request->getMethod()) == 'put' ) {
-                $put_request = new Request();                
-                $post        = $put_request->getPut();
+                $put_request      = new Request();                
+                $post             = $put_request->getPut();
+                $post['username'] = isset($post['username']) ? trim($post['username']) : null;
+                $post['password'] = isset($post['password']) ? trim($post['password']) : null;
+                $user             = User::findFirst("id = '".(int) $request->getAttribute('oauth_user_id')."'");
+                
+                if ( !is_object($user) ) {
+                    throw new \Exception('Could not find the user data!', 3);
+                }
+                
+                $user->updated_at = $date;
                 
             } else {
-                $post = $request->getParsedBody();
-            }            
-            
-            $post['id']       = isset($post['id'])       ? (int) $post['id']       : 0;
-            $post['username'] = isset($post['username']) ? trim($post['username']) : null;
-            $post['password'] = isset($post['password']) ? trim($post['password']) : null;
-            $date             = date('Y-m-d H:i:s', time()); // Greenwich Mean Date and Time To MySQL
-            
-            if ( !empty($post['username']) ) {
-                $user = User::findFirst("username = '".$post['username']."'");
-            }
-            
-            if ( !is_object($user) && $post['id'] > 0 ) {
-                $user = User::findFirst("id = '".$post['id']."'");
-            }
-            
-            if ( is_object($user) ) {
-                $user->updated_at = $date;                
-                
-            } else if ( $post['id'] < 1 ) {
+                $post             = $request->getParsedBody();
+                $post['username'] = isset($post['username']) ? trim($post['username']) : null;
+                $post['password'] = isset($post['password']) ? trim($post['password']) : null;
                 $user             = new User();
-                $user->created_at = $date;
-                $user->scope      = 'password';
+                
+                if ( !empty($post['username']) ) {
+                    $user = User::findFirst("username = '".$post['username']."'");
+                    
+                    if ( is_object($user) ) {
+                        throw new Exception('Invalid user data! The user already existes and cannot be recreated!', 3);
+                    }
+                    
+                    $user = new User();
+                }
                 
                 if ( empty($post['username']) || empty($post['password']) ) {
                     throw new Exception('Username or password are not given!', 3);
                 }
                 
-            } else {
-                throw new Exception('Invalid user data!', 3);
+                $user->created_at = $date;
+                $user->scope      = 'password';
             }
             
-            $user->username = !empty($post['username']) ? $post['username'] : $user->username;
-            $user->password = !empty($post['password']) ? $post['password'] : $user->password;
-            $user->scope    = isset($post['scope'])     ? $post['scope']    : $user->scope;
+            $user->username   = !empty($post['username']) ? $post['username'] : $user->username;
+            $user->password   = !empty($post['password']) ? $post['password'] : $user->password;
+            $user->scope      = isset($post['scope'])     ? $post['scope']    : $user->scope;
             
             if ( !$user->save() ) {
                 throw new Exception('Could not save the user data!', 3);
